@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Friday's Reads</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #1a1a14;
+      --ink-mute: #7a7a6a;
+      --paper: #f8f7f2;
+      --surface: #f2f0e8;
+      --teal-deep: #146152;
+      --teal-mid: #44803F;
+      --orange: #FF5A33;
+      --green: #44803F;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      background: var(--paper);
+    }
+
+    body {
+      font-family: 'Libre Baskerville', Georgia, serif;
+      font-size: 1.2rem;
+      color: var(--ink);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Desktop only */
+    @media (max-width: 768px) {
+      body::before {
+        content: 'Friday\'s Reads is designed for desktop.';
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 1rem;
+        color: var(--ink-mute);
+        padding: 2rem;
+        text-align: center;
+      }
+      #app { display: none; }
+    }
+
+    #app {
+      max-width: 680px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 3rem 2rem 2rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #main { flex: 1; }
+
+    #add-row { display: flex; margin-bottom: 0.75rem; }
+
+    #url-input {
+      flex: 1;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      padding: 0.5rem 1rem;
+      border: 1px solid rgba(26,26,20,0.15);
+      border-right: none;
+      border-radius: 999px 0 0 999px;
+      background: var(--surface);
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    #url-input:focus { border-color: var(--teal-deep); }
+    #url-input::placeholder { color: var(--ink-mute); }
+
+    #add-btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 0.5rem 1.25rem;
+      background: var(--teal-deep);
+      color: #fff;
+      border: none;
+      border-radius: 0 999px 999px 0;
+      cursor: pointer;
+      letter-spacing: 0.03em;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+
+    #add-btn:hover { background: var(--teal-mid); }
+    #add-btn:disabled { opacity: 0.6; cursor: default; }
+
+    #status {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      margin-bottom: 1.5rem;
+      min-height: 1.2rem;
+    }
+
+    #status.confirm { color: var(--green); }
+    #status.error   { color: var(--orange); }
+    #status.info    { color: var(--ink-mute); }
+
+    #link-list { list-style: none; }
+
+    .link-item {
+      padding: 0.5rem 0;
+      animation: fadein 0.18s ease;
+    }
+
+    @keyframes fadein {
+      from { opacity: 0; transform: translateY(-3px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .link-item a {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 1.2rem;
+      color: var(--teal-deep);
+      text-decoration: none;
+      line-height: 1.4;
+      transition: color 0.12s;
+    }
+
+    .link-item a:hover { color: var(--orange); text-decoration: underline; }
+
+    #window-msg {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      color: var(--ink-mute);
+      padding: 1.5rem 0 0.5rem;
+      font-style: italic;
+      line-height: 1.5;
+      display: none;
+    }
+
+    #footer {
+      text-align: center;
+      padding-top: 2.5rem;
+      padding-bottom: 1.5rem;
+    }
+
+    #about-toggle {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      color: var(--ink-mute);
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    #about-toggle:hover { color: var(--teal-deep); }
+
+    #about-panel {
+      display: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.875rem;
+      color: var(--ink-mute);
+      line-height: 1.75;
+      text-align: left;
+      background: var(--surface);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin-top: 1rem;
+      border: 1px solid rgba(26,26,20,0.08);
+    }
+
+    #about-panel p { margin-bottom: 0.75rem; }
+    #about-panel p:last-child { margin-bottom: 0; }
+
+    #about-panel a {
+      color: var(--teal-deep);
+      text-decoration: none;
+    }
+
+    #about-panel a:hover {
+      text-decoration: underline;
+      color: var(--orange);
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div id="main">
+      <div id="add-row">
+        <input id="url-input" type="url" placeholder="Paste a URL…" />
+        <button id="add-btn">Add</button>
+      </div>
+      <div id="status"></div>
+      <ul id="link-list"></ul>
+      <p id="window-msg"></p>
+    </div>
+
+    <div id="footer">
+      <a id="about-toggle" href="#">Friday's Reads</a>
+      <div id="about-panel">
+        <p>Friday's Reads is a simple read-it-later list with a twist: your links only appear on Fridays, between 6 AM and 5 PM Eastern time.</p>
+        <p>Save links any time during the week by pasting a URL above. They'll wait quietly until Friday morning.</p>
+        <p>When you click a link it opens in a new tab and removes itself from the list — no clutter, no archive. Once Friday's window closes at 5 PM, any unread links are cleared and the slate is wiped clean for next week.</p>
+        <p>Made with ❤️ and 🤓 by <a href="https://chadmoore.net" target="_blank" rel="noopener noreferrer">Chad Moore</a> on the seacoast of New Hampshire.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'fridays_reads_v1';
+    const MAX = 9;
+    const MAX_AGE_MS = 28 * 24 * 60 * 60 * 1000;
+
+    function load() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
+    }
+
+    function save(items) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    }
+
+    function getEasternParts() {
+      const now = new Date();
+      const parts = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/New_York',
+        weekday: 'short',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: false
+      }).formatToParts(now);
+      const get = type => parts.find(p => p.type === type)?.value;
+      return {
+        day: get('weekday'),
+        hour: parseInt(get('hour')),
+        minute: parseInt(get('minute'))
+      };
+    }
+
+    function isReadingWindow() {
+      const { day, hour, minute } = getEasternParts();
+      if (day !== 'Fri') return false;
+      const totalMin = hour * 60 + minute;
+      return totalMin >= 6 * 60 && totalMin < 17 * 60;
+    }
+
+    function domainOf(url) {
+      try { return new URL(url).hostname.replace('www.', ''); } catch { return url; }
+    }
+
+    async function fetchTitle(url) {
+      try {
+        const r = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(url));
+        const d = await r.json();
+        const m = (d.contents || '').match(/<title[^>]*>([^<]+)<\/title>/i);
+        return m ? m[1].trim()
+          .replace(/&amp;/g, '&')
+          .replace(/&#039;/g, "'")
+          .replace(/&quot;/g, '"')
+          .replace(/&lt;/g, '<')
+          .replace(/&gt;/g, '>') : null;
+      } catch { return null; }
+    }
+
+    let items = load();
+
+    // Purge if outside reading window
+    if (!isReadingWindow() && items.length > 0) {
+      items = [];
+      save(items);
+    }
+
+    let statusTimer = null;
+
+    function setStatus(msg, type, duration) {
+      const el = document.getElementById('status');
+      el.textContent = msg;
+      el.className = type || '';
+      if (statusTimer) clearTimeout(statusTimer);
+      if (duration) statusTimer = setTimeout(() => { el.textContent = ''; el.className = ''; }, duration);
+    }
+
+    function render() {
+      const list = document.getElementById('link-list');
+      const windowMsg = document.getElementById('window-msg');
+      list.innerHTML = '';
+      const open = isReadingWindow();
+
+      if (open && items.length > 0) {
+        windowMsg.style.display = 'none';
+        items.forEach((item, idx) => {
+          const li = document.createElement('li');
+          li.className = 'link-item';
+          const a = document.createElement('a');
+          a.href = item.url;
+          a.textContent = item.title || item.url;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          a.addEventListener('click', () => setTimeout(() => removeItem(idx), 80));
+          li.appendChild(a);
+          list.appendChild(li);
+        });
+      } else if (open && items.length === 0) {
+        windowMsg.style.display = 'block';
+        windowMsg.textContent = 'No links saved yet.';
+      } else {
+        windowMsg.style.display = 'block';
+        windowMsg.textContent = 'Links are available to read on Fridays, from 6 AM – 5 PM Eastern.';
+      }
+    }
+
+    function removeItem(idx) {
+      items.splice(idx, 1);
+      save(items);
+      render();
+    }
+
+    document.getElementById('add-btn').addEventListener('click', async () => {
+      const input = document.getElementById('url-input');
+      let url = input.value.trim();
+      if (!url) return;
+      if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+      try { new URL(url); } catch { setStatus("That doesn't look like a valid URL.", 'error', 3000); return; }
+      if (items.find(i => i.url === url)) { setStatus('Already in your list.', 'info', 2500); return; }
+
+      const btn = document.getElementById('add-btn');
+      btn.disabled = true;
+      setStatus('Fetching…', 'info');
+
+      const title = await fetchTitle(url) || domainOf(url);
+      if (items.length >= MAX) items.shift();
+      items.push({ url, title, addedAt: Date.now() });
+      save(items);
+      render();
+      input.value = '';
+      btn.disabled = false;
+      setStatus('✓ Added — ' + title, 'confirm', 4000);
+    });
+
+    document.getElementById('url-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('add-btn').click();
+    });
+
+    document.getElementById('about-toggle').addEventListener('click', e => {
+      e.preventDefault();
+      const panel = document.getElementById('about-panel');
+      panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+    });
+
+    // Check window state every minute
+    setInterval(() => {
+      if (!isReadingWindow() && items.length > 0) {
+        items = [];
+        save(items);
+        render();
+      }
+    }, 60 * 1000);
+
+    render();
+  </script>
+</body>
+</html>
